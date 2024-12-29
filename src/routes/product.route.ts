@@ -27,10 +27,10 @@ class ProductRoute implements IRoute {
     //PUT one product
     this.router.put("/product/:productId", this.controller.updateOneProduct);
     //Toggle status one product
-    // this.router.patch(
-    //   "/product/:productId/toggle-status",
-    //   this.controller.toggleStatusProduct
-    // ); //pending
+    this.router.patch(
+      "/product/:productId/toggle-status",
+      this.controller.toggleStatusProduct
+    );
   }
 }
 

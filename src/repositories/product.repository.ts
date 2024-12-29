@@ -6,7 +6,6 @@ export default class ProductRepository {
     description,
     price,
     discount_price,
-    sku,
     quantity_in_stock,
     category_name,
     rating,
@@ -19,7 +18,6 @@ export default class ProductRepository {
     description?: string;
     price: number;
     discount_price?: number;
-    sku?: string;
     quantity_in_stock?: number;
     category_name: string;
     rating?: number;
@@ -34,7 +32,6 @@ export default class ProductRepository {
         description,
         price,
         discount_price,
-        sku,
         quantity_in_stock,
         category_name,
         rating,
@@ -53,14 +50,34 @@ export default class ProductRepository {
       const product = await Database.mssql().execProc("FindUniqueProduct", {
         id: id,
       });
-      return product;
+      return {
+        ...product,
+        color_variants: JSON.parse(product.color_variants),
+        size_variants: JSON.parse(product.size_variants),
+      };
     } catch (error) {
       throw error;
     }
   };
   public getManyProducts = async () => {
     try {
-      const products = await Database.mssql().execProc("FindManyProducts");
+      let products = await Database.mssql().execProc("FindManyProducts");
+      if (products && products.length > 0) {
+        products = products.map((product) => {
+          return {
+            ...product,
+            color_variants: JSON.parse(product.color_variants),
+            size_variants: JSON.parse(product.size_variants),
+          };
+        });
+      }
+      if (products && !Array.isArray(products)) {
+        return {
+          ...products,
+          color_variants: JSON.parse(products.color_variants),
+          size_variants: JSON.parse(products.size_variants),
+        };
+      }
       return products;
     } catch (error) {
       throw error;
@@ -93,7 +110,6 @@ export default class ProductRepository {
       description,
       price,
       discount_price,
-      sku,
       quantity_in_stock,
       category_name,
       rating,
@@ -101,13 +117,11 @@ export default class ProductRepository {
       color_variants,
       size_variants,
       tags,
-      toggle_active,
     }: {
       name?: string;
       description?: string;
       price?: string;
       discount_price?: number;
-      sku?: string;
       quantity_in_stock?: number;
       category_name?: string;
       rating?: number;
@@ -115,7 +129,6 @@ export default class ProductRepository {
       color_variants?: string;
       size_variants?: string;
       tags?: string;
-      toggle_active?: string;
     }
   ) => {
     try {
@@ -125,7 +138,6 @@ export default class ProductRepository {
         description,
         price,
         discount_price,
-        sku,
         quantity_in_stock,
         category_name,
         rating,
@@ -133,7 +145,6 @@ export default class ProductRepository {
         color_variants,
         size_variants,
         tags,
-        toggle_active,
       });
       return productUpdated;
     } catch (error) {
@@ -152,8 +163,9 @@ export default class ProductRepository {
   //pending
   public toggleStatusProduct = async (id: Number) => {
     try {
-      const product = await Database.mssql().execProc("FindUniqueProduct", {
-        id,
+      const product = await Database.mssql().execProc("UpdateProduct", {
+        product_id: id,
+        toggle_active: true,
       });
       return product;
     } catch (error) {

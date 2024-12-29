@@ -19,12 +19,13 @@ export default class ProductController {
         description,
         price,
         discount_price,
-        sku,
         quantity_in_stock,
         category_name,
         rating,
         image_url,
         tags,
+        color_variants,
+        size_variants,
       } = req.body;
 
       const productCreated = await this.productService.createProduct({
@@ -32,12 +33,17 @@ export default class ProductController {
         description,
         price,
         discount_price,
-        sku,
         quantity_in_stock,
         category_name,
         rating,
         image_url,
         tags,
+        color_variants: color_variants
+          ? JSON.stringify(color_variants)
+          : color_variants,
+        size_variants: size_variants
+          ? JSON.stringify(size_variants)
+          : size_variants,
       });
       res.status(StatusCodes.OK).json({
         status: "OK",
@@ -132,7 +138,6 @@ export default class ProductController {
         description,
         price,
         discount_price,
-        sku,
         quantity_in_stock,
         category_name,
         rating,
@@ -140,22 +145,19 @@ export default class ProductController {
         color_variants,
         size_variants,
         tags,
-        toggle_active,
       } = req.body;
       const product = await this.productService.updateOneProduct(id, {
         name,
         description,
         price,
         discount_price,
-        sku,
         quantity_in_stock,
         category_name,
         rating,
         image_url,
-        color_variants,
-        size_variants,
+        color_variants: JSON.stringify(color_variants),
+        size_variants: JSON.stringify(size_variants),
         tags,
-        toggle_active,
       });
       res.status(StatusCodes.OK).json({
         status: "OK",
@@ -182,7 +184,6 @@ export default class ProductController {
       next(error);
     }
   };
-  //Toggle status
   public toggleStatusProduct = async (
     req: Request,
     res: Response,

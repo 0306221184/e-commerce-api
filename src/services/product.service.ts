@@ -11,7 +11,6 @@ export default class ProductService {
     description,
     price,
     discount_price,
-    sku,
     quantity_in_stock,
     category_name,
     rating,
@@ -24,7 +23,6 @@ export default class ProductService {
     description?: string;
     price: number;
     discount_price?: number;
-    sku?: string;
     quantity_in_stock?: number;
     category_name: string;
     rating?: number;
@@ -39,7 +37,6 @@ export default class ProductService {
         description,
         price,
         discount_price,
-        sku,
         quantity_in_stock,
         category_name,
         rating,
@@ -92,7 +89,6 @@ export default class ProductService {
       description,
       price,
       discount_price,
-      sku,
       quantity_in_stock,
       category_name,
       rating,
@@ -100,13 +96,11 @@ export default class ProductService {
       color_variants,
       size_variants,
       tags,
-      toggle_active,
     }: {
       name?: string;
       description?: string;
       price?: string;
       discount_price?: number;
-      sku?: string;
       quantity_in_stock?: number;
       category_name?: string;
       rating?: number;
@@ -114,7 +108,6 @@ export default class ProductService {
       color_variants?: string;
       size_variants?: string;
       tags?: string;
-      toggle_active?: string;
     }
   ) => {
     try {
@@ -123,7 +116,6 @@ export default class ProductService {
         description,
         price,
         discount_price,
-        sku,
         quantity_in_stock,
         category_name,
         rating,
@@ -131,7 +123,6 @@ export default class ProductService {
         color_variants,
         size_variants,
         tags,
-        toggle_active,
       });
       return product;
     } catch (error) {
