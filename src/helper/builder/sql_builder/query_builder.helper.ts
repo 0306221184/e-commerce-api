@@ -9,10 +9,32 @@ type QueryParts = {
 };
 
 export default class QueryBuilder {
+  private static instance: QueryBuilder;
   private parts: QueryParts = {};
   private executed: boolean = false;
 
-  // Ensures `select()` is called first if used
+  // Private constructor to prevent direct instantiation
+  private constructor() {}
+
+  /**
+   * Get the singleton instance of QueryBuilder
+   */
+  public static getInstance(): QueryBuilder {
+    if (!QueryBuilder.instance) {
+      QueryBuilder.instance = new QueryBuilder();
+    }
+    return QueryBuilder.instance;
+  }
+
+  /**
+   * Reset the query parts and execution state
+   */
+  public reset(): this {
+    this.parts = {};
+    this.executed = false;
+    return this;
+  }
+
   select(fields: string[]): Omit<QueryBuilder, "select"> {
     if (this.parts.select || this.parts.from || this.executed) {
       throw new Error("'select()' must be called first, and only once.");
@@ -21,10 +43,9 @@ export default class QueryBuilder {
     return this;
   }
 
-  // Ensures `from()` is called after `select()`
   from(table: string): Omit<QueryBuilder, "from"> {
     if (!this.parts.select) {
-      throw new Error("'select()' must be called before 'from().'");
+      throw new Error("'select()' must be called before 'from()'.");
     }
     if (this.parts.from || this.executed) {
       throw new Error("'from()' must be called only once.");
@@ -57,7 +78,7 @@ export default class QueryBuilder {
     return this;
   }
 
-  orderBy(fields: string[], by: string): this {
+  orderBy(fields: string[], by: "ASC" | "DESC"): this {
     if (this.executed) {
       throw new Error("'orderBy()' cannot be called after query execution.");
     }
@@ -73,7 +94,6 @@ export default class QueryBuilder {
     return this;
   }
 
-  // Build SQL Server Query
   buildSqlServerQuery(): string {
     if (!this.parts.select || !this.parts.from) {
       throw new Error(
@@ -111,7 +131,6 @@ export default class QueryBuilder {
     return query;
   }
 
-  // Build PostgreSQL Query
   buildPostgreSQLQuery(): string {
     if (!this.parts.select || !this.parts.from) {
       throw new Error(
